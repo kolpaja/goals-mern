@@ -72,9 +72,19 @@ const loginUser = asyncHandler(async (req, res, next) => {
 //@route GET /api/users/me
 //@access Private
 const getME = asyncHandler(async (req, res, next) => {
-    res.status(200).json({
-        message: 'User profile data'
-    })
+    const user = await User.findById(req.user.id).select('-password');
+    if (user) {
+        res.json({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+        });
+    } else {
+        res.status(400).json({
+            message: 'Invalid user datas'
+        });
+    }
 });
 
 const generateToken = (id) => {
